@@ -1,19 +1,6 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
 %}
 
-<head>
-    <script>
-        function fun() {
-            var str = +document.getElementById('name_dec_file').value;
-            if (str.includes(".")) {
-                window.alert('File name contains extension!');
-                return false;
-            } else {
-                return true;
-            }
-        }  
-    </script>
-</head>
 <form enctype="multipart/form-data" method="POST" action="/process">
     
     <center>
@@ -34,7 +21,7 @@
             </table>
             <input type="hidden" id="method" name="method" value="aes_dec" />
         <br></br>
-        <input type="submit" onclick="return fun();">
+        <input type="submit">
     </center>
 </form>
 {% endblock %}

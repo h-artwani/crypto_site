@@ -1,27 +1,24 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, flash
 from flask_login import login_required, current_user
-from .steg_advanced import encode_img, decode_file
-from .server import tripDES, AES, RSA
+from .server import tripDES, AES, RSA, SHA3, DH, empty_static
 import os
-import cv2
 
 views = Blueprint('views', __name__)
 
 UPLOAD_FOLDER = "website/static/"
 
-store_dict = {}
-
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
+    folders = empty_static.list_folders("./" + UPLOAD_FOLDER)
+    print(folders)
+    for folder in folders:
+        empty_static.empty_folder(folder)
     return render_template("home.html", user=current_user)
 
 @views.route('/method' , methods = ['GET', 'POST'])
 def method():
-    # encoded_images_list= os.listdir(UPLOAD_FOLDER + "encoded_images")
-    # method = request.form['method']
     method = request.args.get('met')
-    print(method,"============")
     if method == "3_des":
         return render_template('3_des.html', user=current_user)
     elif method == "3_des_dec":
@@ -30,6 +27,22 @@ def method():
         return render_template('aes.html', user=current_user)
     elif method == "aes_dec":
         return render_template('aes_dec.html', user=current_user)
+    elif method == "rsa_keys":
+        RSA.generate_key_pair(UPLOAD_FOLDER)
+        pub_key = './static/keys/public_key.pem'
+        pvt_key = './static/keys/private_key.pem'
+        return render_template('download_keys.html', user=current_user, public_key=pub_key, private_key=pvt_key)
+    elif method == "rsa_enc":
+        return render_template('rsa_enc.html', user=current_user)
+    elif method == "rsa_dec":
+        return render_template('rsa_dec.html', user=current_user)
+    elif method == "sha3":
+        return render_template('sha3.html', user=current_user)
+    elif method == "dh":
+        DH.generate_keys(UPLOAD_FOLDER)
+        pub_key = './static/keys/public_key.pem'
+        pvt_key = './static/keys/private_key.pem'
+        return render_template('download_keys.html', user=current_user, public_key=pub_key, private_key=pvt_key)
     else:
         return render_template('home.html', user=current_user)
 
@@ -58,27 +71,21 @@ def process():
             name_dec_file = request.form['name_dec_file']
             key = request.form['key']
             return enc_dec(method=method, file=file_for_dec, name=name_dec_file, key=key, process="dec", key_size="")
-            
-    return render_template('encode.html', request_method = request_method, user=current_user)
-
-# @views.route('/decode' , methods = ['GET', 'POST'])
-# def decode():
-#     request_method = request.method
-#     if request_method == 'GET':
-#         ini_list = request.args.get('list_files')
-#         ini_list_files = ini_list.strip('][').split(', ')
-#         list_files = []
-#         for name_list in ini_list_files:
-#             list_files.append(name_list[1:len(name_list)-1])
-#     if request_method == 'POST':
-#         method = request.form['method']
-#         if method == "decode":
-#             encoded_name = request.form['encoded_name']
-#             lth_bit = int(request.form['L'])
-#             s_bit = int(request.form['S'])
-
-#             return name(method=method, file_to_encode="", image=encoded_name, lth_bit=lth_bit, s_bit=s_bit)
-#     return render_template('decode.html', request_method = request_method, list_files=list_files)
+        elif method == "rsa_enc":
+            file_for_enc = request.files['file_for_enc']
+            pub_key = request.files['pub_key']
+            name_enc_file = request.form['name_enc_file']
+            return enc_dec(method=method, file=file_for_enc, name=name_enc_file, key=pub_key, process="enc", key_size="")
+        elif method == "rsa_dec":
+            file_for_dec = request.files['file_for_dec']
+            pvt_key = request.files['pvt_key']
+            name_dec_file = request.form['name_dec_file']
+            return enc_dec(method=method, file=file_for_dec, name=name_dec_file, key=pvt_key, process="dec", key_size="")
+        elif method == "sha3":
+            file_for_enc = request.files['file_for_enc']
+            return enc_dec(method=method, file=file_for_enc, name="", key="", process="enc", key_size="")    
+        else:
+            return render_template('home.html', user=current_user)
 
 def enc_dec(method, file, name, key, process, key_size):
     
@@ -101,6 +108,19 @@ def enc_dec(method, file, name, key, process, key_size):
         elif method == "aes" and key_size == "256":
             key = AES.encrypt_file_256(input_file, output_file)
             key = key.decode()
+        elif method == "rsa_enc":
+            file_path = UPLOAD_FOLDER + 'file_for_encryption/' + file_name
+            size = os.path.getsize(file_path)
+            if size>244:
+                flash('File size is more than key size! Please upload a smaller size file.')
+                return render_template('rsa_enc.html', user=current_user)
+            else:
+                key = key.read()
+                RSA.encrypt_file(key, input_file, output_file)
+                key = ""
+        elif method == "sha3":
+            hash_value = SHA3.sha3_256(input_file)
+            return render_template('display_hash.html', user= current_user, hash=hash_value)
         else:
             print()
         output_file = output_file[7:]
@@ -125,13 +145,11 @@ def enc_dec(method, file, name, key, process, key_size):
             byte_key = bytes(key, 'utf-8')
             print(type(byte_key))
             AES.decrypt_file_256(byte_key, input_file, output_file)
+        elif method == "rsa_dec":
+            key = key.read()
+            RSA.decrypt_file(key, input_file, output_file)
+            key = ""
         output_file = output_file[7:]
         return render_template('download_file.html', file_path=output_file, user= current_user, process_name= "decryption", key=key)
 
-    elif method == "decode":
-        decoded_data = decode_file(UPLOAD_FOLDER + 'encoded_images/' + image, lth_bit=lth_bit, s_bit=s_bit)
-        print(decoded_data)
-        final = decoded_data[7:]
-        print(final)
-
-        return render_template('decoded_file_display.html', filename=final, user= current_user)
+    

@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+
+<head>
+    <script>
+        function myFunction() {
+            let textarea = document.getElementById("key");
+            textarea.select();
+            document.execCommand("copy");
+            alert("Copied the text: " + textarea.value);
+        }
+    </script>
+</head>
+<h1 align="center">Download the keys below:</h1>
+</ul>
+<div>
+    <center>
+        <br></br>
+        <table>
+            <tr>
+                <td><p>Public key &ensp;:&ensp;<a href="{{ public_key }}" download>Download</a></p></td>
+            </tr>
+            <tr>
+                <td><p>Private key :&ensp;<a href="{{ private_key }}" download>Download</a></p></td>
+            </tr>
+        </table>
+        
+        <a href="/">Back to Home page</a>
+    </center>
+</div>
+{% endblock %}

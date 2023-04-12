@@ -15,23 +15,18 @@
             </tr>
             <tr>
                 <td>
-                    <p>Enter name of encrypted file without extension: &ensp;</p>
+                    <p>Upload public key for encryption:</p>
                 </td>
-                <td><input type="text" name="name_enc_file" id="name_dec_file" required></td>
+                <td><input type="file" id="pub_key" name="pub_key" required></td>
             </tr>
             <tr>
                 <td>
-                    <p><label for="key_size" required>Choose key bit size:</label></p>
+                    <p>Enter name of encrypted file without extension: &ensp;</p>
                 </td>
-                <td>
-                    <select name="key_size" id="key_size">
-                        <option value="128">128 Bits</option>
-                        <option value="256">256 Bits</option>
-                    </select>
-                </td>
+                <td><input type="text" name="name_enc_file" id="name_enc_file" required></td>
             </tr>
         </table>
-        <input type="hidden" id="method" name="method" value="aes" />
+        <input type="hidden" id="method" name="method" value="rsa_enc" />
         <br></br>
         <input type="submit">
     </center>

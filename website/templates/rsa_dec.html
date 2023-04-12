@@ -1,0 +1,34 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+
+<h1 align="center">Fill the form for encryption:</h1>
+<form enctype="multipart/form-data" method="POST" action="/process">
+
+    <center>
+        <br></br>
+        <table>
+            <tr>
+                <td>
+                    <p>Upload file for encryption:</p>
+                </td>
+                <td><input type="file" id="file_for_dec" name="file_for_dec" required></td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Upload public key for encryption:</p>
+                </td>
+                <td><input type="file" id="pvt_key" name="pvt_key" required></td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Enter name of encrypted file without extension: &ensp;</p>
+                </td>
+                <td><input type="text" name="name_dec_file" id="name_dec_file" required></td>
+            </tr>
+        </table>
+        <input type="hidden" id="method" name="method" value="rsa_dec" />
+        <br></br>
+        <input type="submit">
+    </center>
+</form>
+{% endblock %}

@@ -10,6 +10,6 @@ def sha3_256(file_path):
 
     return hash_value.hex()
 
-filename = "../static/sample.txt"
-hash_value = sha3_256(filename)
-print(hash_value)
+# filename = "../static/sample.txt"
+# hash_value = sha3_256(filename)
+# print(hash_value)
