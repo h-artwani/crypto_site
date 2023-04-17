@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+    %}
+    
+    <h1 align="center">Update the details below:</h1>
+    <form enctype="multipart/form-data" method="POST" action="/edit_users_list">
+    
+        <center>
+            <br></br>
+            <table>
+                <tr>
+                    <td>
+                        <p>Name:</p>
+                    </td>
+                    <td><input type="text" id="name" name="name" value = "{{ users.first_name }}" required></td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Email: &ensp;</p>
+                    </td>
+                    <td><input type="email" name="email_id" id="email_id" value = "{{ users.email }}" required></td>
+                    <input type="hidden" name="email" id="email" value = "{{ users.email }}" >
+                </tr>
+            </table>
+            <br>
+            <input type="submit">
+        </center>
+    </form>
+    {% endblock %}

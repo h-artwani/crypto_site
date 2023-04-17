@@ -1,5 +1,6 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
 %}
+
 <head>
   <style>
     .dropbtn {
@@ -9,55 +10,44 @@
       font-size: 16px;
       border: none;
     }
-    
+
     .dropdown {
       position: relative;
       display: inline-block;
     }
-    
+
     .dropdown-content {
       display: none;
       position: absolute;
       background-color: #f1f1f1;
       min-width: 160px;
-      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
       z-index: 1;
     }
-    
+
     .dropdown-content a {
       color: black;
       padding: 12px 16px;
       text-decoration: none;
       display: block;
     }
-    
-    .dropdown-content a:hover {background-color: #ddd;}
-    
-    .dropdown:hover .dropdown-content {display: block;}
-    
-    .dropdown:hover .dropbtn {background-color: #4f4f4f;}
-    </style>
+
+    .dropdown-content a:hover {
+      background-color: #ddd;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown:hover .dropbtn {
+      background-color: #4f4f4f;
+    }
+  </style>
 </head>
 
 <h1 align="center"><label for="cars">Select a method:</label></h1>
 <form method="POST" action="/method">
-
-  <!-- <center>
-    <h3>
-      <select name="method" id="method">
-        <option value="3_des">Encryption using 3-DES</option>
-        <option value="3_des_dec">Decryption using 3-DES</option>
-        <option value="aes">Encryption using AES</option>
-        <option value="aes_dec">Decryption using AES</option>
-        <option value="rsa">Encryption using RSA</option>
-        <option value="rsa_dec">Decryption using RSA</option>
-        <option value="hash">Hash a file using SHA-3</option>
-        <option value="key_gen">Key Generation and sharing</option>
-      </select>
-    </h3>
-    <br></br>
-    <input type="submit">
-  </center> -->
   <center>
     <table>
       <tr>
@@ -100,6 +90,7 @@
             <button class="dropbtn">Secure Hash Algorithm 3 (SHA-3)</button>
             <div class="dropdown-content">
               <a href="method?met=sha3">Hash a file</a>
+              <a href="method?met=compare_hashes">Compare file hashes</a>
             </div>
           </div>
         </td>
@@ -111,7 +102,7 @@
             </div>
           </div>
         </td>
-        
+
       </tr>
     </table>
   </center>

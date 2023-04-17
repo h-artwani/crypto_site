@@ -38,6 +38,8 @@ def method():
         return render_template('rsa_dec.html', user=current_user)
     elif method == "sha3":
         return render_template('sha3.html', user=current_user)
+    elif method == "compare_hashes":
+        return render_template('compare_hashes.html', user=current_user)
     elif method == "dh":
         DH.generate_keys(UPLOAD_FOLDER)
         pub_key = './static/keys/public_key.pem'
@@ -84,6 +86,10 @@ def process():
         elif method == "sha3":
             file_for_enc = request.files['file_for_enc']
             return enc_dec(method=method, file=file_for_enc, name="", key="", process="enc", key_size="")    
+        elif method == "compare_hashes":
+            file_for_enc = request.files['file_for_enc']
+            name = request.files['name']
+            return enc_dec(method=method, file=file_for_enc, name=name, key="", process="enc", key_size="")    
         else:
             return render_template('home.html', user=current_user)
 
@@ -92,12 +98,16 @@ def enc_dec(method, file, name, key, process, key_size):
     if process == "enc":
         file_name = file.filename
         file.save(os.path.join(UPLOAD_FOLDER + 'file_for_encryption', file_name))
+        if method == "compare_hashes":
+            file.save(os.path.join(UPLOAD_FOLDER + 'file_for_encryption', name.filename))
         # split the absolute path and the file
         path, file = os.path.split(file_name)
         # split the filename and the image extension
         filename, ext = file.split(".")
         output_file = UPLOAD_FOLDER + "encrypted_files/" + f"{name}.{ext}"
         input_file  = UPLOAD_FOLDER + 'file_for_encryption/' + file_name
+        if method == "compare_hashes":
+            input_file_2 = UPLOAD_FOLDER + 'file_for_encryption/'+ name.filename
         if method == "3_des":
             padded_key = key.encode('utf-8')
             padded_key += b'\x00' * (16 - len(padded_key))
@@ -121,6 +131,10 @@ def enc_dec(method, file, name, key, process, key_size):
         elif method == "sha3":
             hash_value = SHA3.sha3_256(input_file)
             return render_template('display_hash.html', user= current_user, hash=hash_value)
+        elif method == "compare_hashes":
+            hash_value1 = SHA3.sha3_256(input_file)
+            hash_value2 = SHA3.sha3_256(input_file_2)
+            return render_template('display_compare_hashes.html', user= current_user, hash=hash_value1, hash2=hash_value2, filename1=file_name, filename2=name.filename)
         else:
             print()
         output_file = output_file[7:]
@@ -152,4 +166,3 @@ def enc_dec(method, file, name, key, process, key_size):
         output_file = output_file[7:]
         return render_template('download_file.html', file_path=output_file, user= current_user, process_name= "decryption", key=key)
 
-    

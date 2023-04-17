@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+    %}
+    
+    <h1 align="center">Fill the form for encryption:</h1>
+    <form enctype="multipart/form-data" method="POST" action="/process">
+    
+        <center>
+            <br></br>
+            <table>
+                <tr>
+                    <td>
+                        <p>Upload first file for hashing:</p>
+                    </td>
+                    <td><input type="file" id="file_for_enc" name="file_for_enc" required></td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Upload second file for hashing:</p>
+                    </td>
+                    <td><input type="file" id="name" name="name" required></td>
+                </tr>
+            </table>
+            <input type="hidden" id="method" name="method" value="compare_hashes" />
+            <br></br>
+            <input type="submit">
+        </center>
+    </form>
+    {% endblock %}

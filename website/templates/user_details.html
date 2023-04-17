@@ -1,0 +1,55 @@
+{% extends "base.html" %} {% block head %} {{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename= 'extended_beauty.css') }}" />
+{% endblock %} {% block content %}
+
+<head>
+    <style>
+        body {
+            counter-reset: Serial;
+            /* Set the Serial counter to 0 */
+        }
+
+        table {
+            border-collapse: separate;
+        }
+
+        tr td:first-child:before {
+            counter-increment: Serial;
+            /* Increment the Serial counter */
+            content: counter(Serial) ".  ";
+            /* Display the counter */
+        }
+    </style>
+</head>
+<h1>
+    Welcome, Admin!
+</h1>
+<div>
+    <table class="table table-hover" style="width: 700px;">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <a href="edit_users_list?email={{ user.email }}" class="btn btn-outline-primary" role="button">
+                        Edit
+                    </a>
+                </td>
+                <td>
+                    <a href="/delete?email={{ user.email }}" class="btn btn-outline-danger" role="button">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

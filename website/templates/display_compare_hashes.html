@@ -9,19 +9,32 @@
             document.execCommand("copy");
             alert("Copied the text: " + textarea.value);
         }
+        function myFunction2() {
+            let textarea = document.getElementById("hash2");
+            textarea.select();
+            document.execCommand("copy");
+            alert("Copied the text: " + textarea.value);
+        }
     </script>
 </head>
-<h1 align="center">Generated hash is displayed below:</h1>
+<h1 align="center">Generated hashes are displayed below:</h1>
 </ul>
 <div>
     <center>
         <table>
             <tr>
-                <td><p>Hash of the uploaded file:&ensp;</p></td>
+                <td><p>Hash of {{ filename1 }} file:&ensp;</p></td>
                 <td>
                     <input type="text" id="hash" name="hash" value="{{ hash }}" readonly>
                 </td>
                 <td><button onclick="myFunction()">Copy text</button></td>
+            </tr>
+            <tr>
+                <td><p>Hash of {{ filename2 }} file:&ensp;</p></td>
+                <td>
+                    <input type="text" id="hash2" name="hash2" value="{{ hash2 }}" readonly>
+                </td>
+                <td><button onclick="myFunction2()">Copy text</button></td>
             </tr>
         </table>
         

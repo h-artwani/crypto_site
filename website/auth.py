@@ -10,9 +10,17 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'GET':
+        user = request.args.get('user')
+        if user == "admin":
+            return render_template('admin_home.html', user="admin")
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
+
+        if email == "harsh@admin":
+            if password == "admin@123":
+                return render_template('admin_home.html', user="admin")
 
         user = User.query.filter_by(email=email).first()
         if user:
@@ -31,8 +39,12 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
-    logout_user()
-    return redirect(url_for('auth.login'))
+    user = request.args.get('user')
+    if user == "admin":
+        return render_template("login.html")
+    else:
+        logout_user()
+        return redirect(url_for('auth.login'))
 
 @auth.route('/display_encoded_images')
 def display_encoded_images():
@@ -69,3 +81,38 @@ def sign_up():
             return redirect(url_for('views.home'))
 
     return render_template("sign_up.html", user=current_user)
+
+@auth.route('/users_list', methods=['GET', 'POST'])
+def users_details():
+    users = User.query.all()
+    return render_template("user_details.html", user="admin", users=users)
+
+@auth.route('/edit_users_list', methods=['GET', 'POST'])
+def edit_users_details():
+    if request.method == "GET":
+        email = request.args.get('email')
+        users = User.query.filter_by(email=email).first()
+        # print(users.first_name) 
+        return render_template("edit_user_details.html", user="admin", users=users)
+    if request.method == "POST":
+        name = request.form.get('name')
+        email_id = request.form.get('email_id')
+        email = request.form.get('email')
+        users = User.query.filter_by(email=email).first()
+        print(users.email)
+        users.email = email_id
+        users.first_name = name
+        db.session.commit()
+        flash("Changes updated!")
+        users = User.query.all()
+        return render_template("user_details.html", user="admin", users=users)
+    
+@auth.route('/delete', methods=['GET', 'POST'])
+def delete():
+    if request.method == "GET":
+        email = request.args.get('email')
+        users = User.query.filter_by(email=email).delete()
+        db.session.commit()
+        flash("Changes updated!")
+        users = User.query.all()
+        return render_template("user_details.html", user="admin", users=users)
