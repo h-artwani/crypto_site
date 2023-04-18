@@ -2,3 +2,4 @@ https://cryptography.io/en/latest/
 https://pypi.org/project/cryptography/ 
 https://github.com/pyca/cryptography
 https://cryptography.io/en/latest/
+https://github.com/techwithtim/Flask-Web-App-Tutorial
